@@ -1,0 +1,28 @@
+services:
+  backend:
+    build: ./backend
+    container_name: hackstrom_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GROQ_MODEL=${GROQ_MODEL:-llama-3.3-70b-versatile}
+      - DATABASE_URL=sqlite:///./hackstrom.db
+      - UPLOAD_DIR=uploads
+    volumes:
+      - uploads_data:/app/uploads
+      - db_data:/app
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: hackstrom_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  uploads_data:
+  db_data:
